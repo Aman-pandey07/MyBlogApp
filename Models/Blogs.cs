@@ -31,5 +31,12 @@ namespace MyBlogApp.Models
 
         // Relationships
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
+
+        // Foreign Key for User
+        public Guid UserId { get; set; }  // Make sure this exists
+
+        // Navigation Property
+        public User? User { get; set; }  // Add this if missing
     }
 }

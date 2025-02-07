@@ -18,7 +18,7 @@ namespace MyBlogApp.Data
                 .HasOne(b => b.Author)
                 .WithMany(u => u.Blogs)
                 .HasForeignKey(b => b.AuthorId)
-                .OnDelete(DeleteBehavior.Cascade); // Delete blogs if author is deleted
+                .OnDelete(DeleteBehavior.NoAction); // Delete blogs if author is deleted
 
             modelBuilder.Entity<Comment>()
                 .HasOne(c => c.CommentedUser)
