@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Bogus;
+using Microsoft.EntityFrameworkCore;
 using MyBlogApp.Models;
 
 namespace MyBlogApp.Data
@@ -31,6 +32,9 @@ namespace MyBlogApp.Data
                 .WithMany(b => b.Comments)
                 .HasForeignKey(c => c.BlogId)
                 .OnDelete(DeleteBehavior.Cascade); // Delete comments if blog is deleted
+
+
+           
         }
     }
 }

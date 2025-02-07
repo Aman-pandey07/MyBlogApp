@@ -18,8 +18,10 @@ namespace MyBlogApp.Migrations
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     UserEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserPhoneNumber = table.Column<int>(type: "int", nullable: false),
-                    isUserAutherOrUser = table.Column<bool>(type: "bit", nullable: false)
+                    UserPhone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProfilePicture = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsAuthor = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -31,10 +33,13 @@ namespace MyBlogApp.Migrations
                 columns: table => new
                 {
                     BlogId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    BlogTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BlogTitle = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     BlogContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BlogImage = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    AutherUserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -42,6 +47,11 @@ namespace MyBlogApp.Migrations
                     table.ForeignKey(
                         name: "FK_Blogs_Users_AuthorId",
                         column: x => x.AuthorId,
+                        principalTable: "Users",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_Blogs_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
@@ -52,9 +62,11 @@ namespace MyBlogApp.Migrations
                 columns: table => new
                 {
                     CommentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CommentContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CommentContent = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     CommentedUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    BlogId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    CommentedUserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BlogId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -77,6 +89,11 @@ namespace MyBlogApp.Migrations
                 name: "IX_Blogs_AuthorId",
                 table: "Blogs",
                 column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Blogs_UserId",
+                table: "Blogs",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_BlogId",
