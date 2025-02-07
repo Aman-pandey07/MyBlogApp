@@ -3,28 +3,33 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyBlogApp.Models
 {
-    public class Blogs
+    public class Blog
     {
         [Key]
-        public Guid BlogId { get; set; }
+        public Guid BlogId { get; set; } = Guid.NewGuid();
 
         [Required]
-        public required string BlogTitle { get; set; }
+        [StringLength(200, MinimumLength = 3, ErrorMessage = "The Title should be between 3 and 200 characters")]
+        public string BlogTitle { get; set; } = string.Empty;
 
         [Required]
-        public required string BlogContent { get; set; }
+        public string BlogContent { get; set; } = string.Empty;
 
-        public string? BlogImage { get; set; }
+        public string? BlogImage { get; set; } // Optional Image URL
 
+        [Required]
+        public string AutherUserName { get; set; } = string.Empty; // Denormalization for easy access
 
-        // Foreign key to User
-        public Guid AuthorId { get; set; }
-        [ForeignKey("AuthorId")]
-        public required User Author { get; set; }  // Navigation property
+        [Required]
+        [ForeignKey("User")]
+        public Guid AuthorId { get; set; } // Foreign Key
 
-        // Navigation property for comments
-        public ICollection<Comments> Comments { get; set; } = new List<Comments>(); // One Blog -> Many Comments
+        public User Author { get; set; } = null!; // Navigation Property
 
+        [Required]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow; // Timestamp
 
+        // Relationships
+        public ICollection<Comment> Comments { get; set; } = new List<Comment>();
     }
 }

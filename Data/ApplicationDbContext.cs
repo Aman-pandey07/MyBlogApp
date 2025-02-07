@@ -8,28 +8,29 @@ namespace MyBlogApp.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<Blogs> Blogs { get; set; }
-        public DbSet<Comments> Comments { get; set; }
+        public DbSet<Blog> Blogs { get; set; }
+        public DbSet<Comment> Comments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Blogs>()
+            // Configure relationships
+            modelBuilder.Entity<Blog>()
                 .HasOne(b => b.Author)
                 .WithMany(u => u.Blogs)
                 .HasForeignKey(b => b.AuthorId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Cascade); // Delete blogs if author is deleted
 
-            modelBuilder.Entity<Comments>()
+            modelBuilder.Entity<Comment>()
                 .HasOne(c => c.CommentedUser)
                 .WithMany(u => u.Comments)
                 .HasForeignKey(c => c.CommentedUserId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Restrict); // Prevent deleting user if comments exist
 
-            modelBuilder.Entity<Comments>()
+            modelBuilder.Entity<Comment>()
                 .HasOne(c => c.Blog)
                 .WithMany(b => b.Comments)
                 .HasForeignKey(c => c.BlogId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Cascade); // Delete comments if blog is deleted
         }
     }
 }

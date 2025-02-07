@@ -1,29 +1,36 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection.Metadata;
 
 namespace MyBlogApp.Models
 {
     public class User
     {
-
         [Key]
-        public Guid UserId { get; set; }
-
-        [StringLength(200, MinimumLength = 3, ErrorMessage = "The Name should be between 3 and 200 characters")]
-        public required string UserName { get; set; }
-
-        [Required, EmailAddress]  
-        public required string UserEmail { get; set; }
+        public Guid UserId { get; set; } = Guid.NewGuid();
 
         [Required]
-        public required long UserPhoneNumber { get; set; }
+        [StringLength(200, MinimumLength = 3, ErrorMessage = "The Name should be between 3 and 200 characters")]
+        public string UserName { get; set; } = string.Empty;
 
-        // TODO Implementation of Dp is left please keep a note of it
+        [Required]
+        [EmailAddress]
+        public string UserEmail { get; set; } = string.Empty;
 
-        public bool isUserAutherOrUser { get; set; }
+        [Required]
+        [Phone]
+        public string UserPhone { get; set; } = string.Empty; // Changed to string
 
+        public string? ProfilePicture { get; set; } // Optional Profile Picture URL
 
-        // Navigation properties
-        public ICollection<Blogs> Blogs { get; set; } = new List<Blogs>(); // One User -> Many Blogs
-        public ICollection<Comments> Comments { get; set; } = new List<Comments>(); // One User -> Many Comments
+        [Required]
+        public bool IsAuthor { get; set; } // True if the user is an author
+
+        [Required]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow; // Timestamp
+
+        // Relationships
+        public ICollection<Blog> Blogs { get; set; } = new List<Blog>();
+        public ICollection<Comment> Comments { get; set; } = new List<Comment>();
     }
 }
