@@ -47,7 +47,7 @@ namespace MyBlogApp.Controllers
     //    [HttpGet()]
     //    [Route("GetUsersById")]
     //    public async Task<IActionResult> GetUsersById(Guid id)
-    //    {
+    //    { 
     //        var user = await db.Users.FindAsync(id);
     //        if(user == null)
     //        {
