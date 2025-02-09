@@ -12,8 +12,8 @@ using MyBlogApp.Data;
 namespace MyBlogApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250206135605_InitialCreate02")]
-    partial class InitialCreate02
+    [Migration("20250207131530_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,11 +25,15 @@ namespace MyBlogApp.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("MyBlogApp.Models.Blogs", b =>
+            modelBuilder.Entity("MyBlogApp.Models.Blog", b =>
                 {
                     b.Property<Guid>("BlogId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AutherUserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("AuthorId")
                         .HasColumnType("uniqueidentifier");
@@ -43,16 +47,25 @@ namespace MyBlogApp.Migrations
 
                     b.Property<string>("BlogTitle")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("BlogId");
 
                     b.HasIndex("AuthorId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Blogs");
                 });
 
-            modelBuilder.Entity("MyBlogApp.Models.Comments", b =>
+            modelBuilder.Entity("MyBlogApp.Models.Comment", b =>
                 {
                     b.Property<Guid>("CommentId")
                         .ValueGeneratedOnAdd()
@@ -63,10 +76,18 @@ namespace MyBlogApp.Migrations
 
                     b.Property<string>("CommentContent")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<Guid>("CommentedUserId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CommentedUserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("CommentId");
 
@@ -83,6 +104,15 @@ namespace MyBlogApp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsAuthor")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ProfilePicture")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("UserEmail")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -92,31 +122,37 @@ namespace MyBlogApp.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<long>("UserPhoneNumber")
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("isUserAutherOrUser")
-                        .HasColumnType("bit");
+                    b.Property<string>("UserPhone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("MyBlogApp.Models.Blogs", b =>
+            modelBuilder.Entity("MyBlogApp.Models.Blog", b =>
                 {
                     b.HasOne("MyBlogApp.Models.User", "Author")
                         .WithMany("Blogs")
                         .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MyBlogApp.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Author");
+
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MyBlogApp.Models.Comments", b =>
+            modelBuilder.Entity("MyBlogApp.Models.Comment", b =>
                 {
-                    b.HasOne("MyBlogApp.Models.Blogs", "Blog")
+                    b.HasOne("MyBlogApp.Models.Blog", "Blog")
                         .WithMany("Comments")
                         .HasForeignKey("BlogId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -133,7 +169,7 @@ namespace MyBlogApp.Migrations
                     b.Navigation("CommentedUser");
                 });
 
-            modelBuilder.Entity("MyBlogApp.Models.Blogs", b =>
+            modelBuilder.Entity("MyBlogApp.Models.Blog", b =>
                 {
                     b.Navigation("Comments");
                 });

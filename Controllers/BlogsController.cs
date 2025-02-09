@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyBlogApp.Data;
 using MyBlogApp.Models;
@@ -86,6 +87,7 @@ namespace MyBlogApp.Controllers
 
     [Route("api/blogs")]
     [ApiController]
+    [Authorize]
     public class BlogsController : ControllerBase
     {
         private readonly ApplicationDbContext _db;
