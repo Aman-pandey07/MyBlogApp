@@ -68,6 +68,15 @@ builder.Services.AddAuthentication(options =>
 });
 
 
+// Load configuration from environment-specific files
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.IsDevelopment}.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
+
+
+
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -90,6 +99,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+app.UseAuthentication();
+
 
 app.MapControllers();
 
